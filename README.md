@@ -25,6 +25,17 @@ Recommended run order:
 3. `nonlinear_observability.m` — compares the old LTI approach (constant C, flat rank over time) against the new LTV approach (Jacobian H, rank rebuilt at every timestep). Produces 3 figures.
 4. `main_ekf.m` — runs the full Part 2 pipeline (EKF + LTI vs LTV observability) in one script. **Run this one file to see the full Part 2 pipeline.** Produces 12 figures.
 
+## How to run — Part 3: UAV trajectory comparison (straight vs zig-zag)
+
+These files compare observability when the UAV flies a straight-line patrol versus a zig-zag path, using the same Jacobian-based observability pipeline from Part 2.
+
+Run in this order:
+
+1. `uav_trajectory.m` — defines and plots both UAV flight paths in isolation (straight line vs zig-zag). Run this first to see what the two paths look like.
+2. `main_compare.m` — runs the full observability pipeline twice, once per UAV path, and plots rank(O), cond(O), and Gramian metrics side by side for direct comparison.
+
+**Current finding:** with the present camera model, the rank/cond/Gramian plots come out identical between the two UAV paths. This is because the measurement Jacobian H = [fx/z, 0, 0, 0; 0, fy/z, 0, 0] depends only on focal length and a fixed altitude z — it does not receive the UAV's lateral position as an input, so the UAV's flight path has no mathematical way to affect H in the current model. Making the zig-zag maneuver actually show up in the observability metrics likely requires either camera yaw (rotating to track the ship) or depth Z varying with relative UAV-ship distance — this is the next open question for the project.
+
 ## Quick summary: which file to run for what
 
 | Goal | File to run |
@@ -34,3 +45,5 @@ Recommended run order:
 | Understand the math behind h(X) and the Jacobian H | `measurement_model.m` |
 | Understand EKF predict/update steps in isolation | `ekf.m` |
 | Understand how rank(O) differs between constant C and time-varying H | `nonlinear_observability.m` |
+| See both UAV flight paths plotted in isolation | `uav_trajectory.m` |
+| Compare observability between straight-line and zig-zag UAV paths | `main_compare.m` |
